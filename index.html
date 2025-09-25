@@ -374,6 +374,75 @@
         }
     </style>
 </head>
+<!-- Tambahkan di bawah sebelum </body> -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.24.0/firebase-app.js";
+  import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.24.0/firebase-storage.js";
+  import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/9.24.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+  apiKey: "AIzaSyBDsmbj8GQnKtAmvi2P3Lim7Ojmd3e3G50",
+  authDomain: "foto-bersama.firebaseapp.com",
+  projectId: "foto-bersama",
+  storageBucket: "foto-bersama.firebasestorage.app",
+  messagingSenderId: "142533134057",
+  appId: "1:142533134057:web:717f6527e242f95e931278",
+  measurementId: "G-KEBEYLTHLC"
+};
+
+  // Init Firebase
+  const app = initializeApp(firebaseConfig);
+  const storage = getStorage(app);
+  const db = getFirestore(app);
+
+  // Upload foto
+  async function uploadPhotos() {
+    if (selectedFiles.length === 0) return;
+
+    for (let file of selectedFiles) {
+      const storageRef = ref(storage, "gallery/" + Date.now() + "_" + file.name);
+      await uploadBytes(storageRef, file);
+      const url = await getDownloadURL(storageRef);
+
+      await addDoc(collection(db, "photos"), {
+        url: url,
+        name: file.name,
+        date: new Date().toLocaleString("id-ID")
+      });
+    }
+
+    selectedFiles = [];
+    document.getElementById('photoInput').value = '';
+    document.getElementById('previewContainer').innerHTML = '';
+    document.getElementById('uploadBtn').disabled = true;
+
+    showSuccessMessage("💕 Foto berhasil diupload 💕");
+    loadPhotos();
+  }
+
+  // Ambil semua foto dari Firestore
+  async function loadPhotos() {
+    const querySnapshot = await getDocs(collection(db, "photos"));
+    photos = [];
+    querySnapshot.forEach(docSnap => {
+      let data = docSnap.data();
+      photos.push({ id: docSnap.id, ...data });
+    });
+    displayPhotos();
+  }
+
+  // Hapus foto
+  async function deletePhoto(photoId) {
+    if (confirm('💔 Yakin hapus foto ini?')) {
+      await deleteDoc(doc(db, "photos", photoId));
+      showSuccessMessage("💔 Foto dihapus");
+      loadPhotos();
+    }
+  }
+
+  // Load foto pas halaman dibuka
+  window.addEventListener("load", loadPhotos);
+</script>
 <body>
     <!-- Floating Hearts -->
     <div class="heart">💖</div>
