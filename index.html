@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>N&D - Our Love Gallery</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', serif;
+            background: linear-gradient(135deg, #ffeef8 0%, #ffe0f0 50%, #ffd5e8 100%);
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Floating hearts animation */
+        .heart {
+            position: absolute;
+            font-size: 20px;
+            color: rgba(255, 182, 193, 0.6);
+            animation: float 6s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        .heart:nth-child(1) { left: 10%; animation-delay: 0s; }
+        .heart:nth-child(2) { left: 20%; animation-delay: 1s; }
+        .heart:nth-child(3) { left: 30%; animation-delay: 2s; }
+        .heart:nth-child(4) { left: 40%; animation-delay: 3s; }
+        .heart:nth-child(5) { left: 50%; animation-delay: 4s; }
+        .heart:nth-child(6) { left: 60%; animation-delay: 5s; }
+        .heart:nth-child(7) { left: 70%; animation-delay: 1.5s; }
+        .heart:nth-child(8) { left: 80%; animation-delay: 2.5s; }
+        .heart:nth-child(9) { left: 90%; animation-delay: 3.5s; }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            50% {
+                transform: translateY(-100vh) rotate(180deg);
+                opacity: 0.8;
+            }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 30px;
+            border-radius: 25px;
+            box-shadow: 0 10px 30px rgba(255, 182, 193, 0.3);
+            border: 3px solid #ffb6c1;
+        }
+
+        .title {
+            font-size: 3.5em;
+            color: #d63384;
+            text-shadow: 2px 2px 4px rgba(255, 182, 193, 0.5);
+            margin-bottom: 10px;
+            font-weight: bold;
+            position: relative;
+        }
+
+        .title::before,
+        .title::after {
+            content: "💕";
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 0.6em;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .title::before {
+            left: -60px;
+        }
+
+        .title::after {
+            right: -60px;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: translateY(-50%) scale(1);
+            }
+            50% {
+                transform: translateY(-50%) scale(1.2);
+            }
+        }
+
+        .subtitle {
+            font-size: 1.2em;
+            color: #e91e63;
+            font-style: italic;
+        }
+
+        .upload-section {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 20px;
+            margin-bottom: 40px;
+            box-shadow: 0 8px 25px rgba(255, 182, 193, 0.4);
+            border: 2px solid #ffb6c1;
+            text-align: center;
+        }
+
+        .upload-title {
+            font-size: 1.8em;
+            color: #d63384;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .file-input-wrapper {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+
+        .file-input {
+            position: absolute;
+            left: -9999px;
+        }
+
+        .file-input-label {
+            display: inline-block;
+            padding: 15px 30px;
+            background: linear-gradient(45deg, #ff69b4, #ff1493);
+            color: white;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 20, 147, 0.3);
+        }
+
+        .file-input-label:hover {
+            background: linear-gradient(45deg, #ff1493, #ff69b4);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 20, 147, 0.4);
+        }
+
+        .upload-btn {
+            background: linear-gradient(45deg, #e91e63, #d63384);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(214, 51, 132, 0.3);
+            margin-left: 10px;
+        }
+
+        .upload-btn:hover {
+            background: linear-gradient(45deg, #d63384, #e91e63);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(214, 51, 132, 0.4);
+        }
+
+        .upload-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .preview-image {
+            max-width: 300px;
+            max-height: 300px;
+            border-radius: 15px;
+            margin: 20px 0;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            border: 3px solid #ffb6c1;
+        }
+
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+
+        .photo-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 8px 25px rgba(255, 182, 193, 0.3);
+            border: 2px solid #ffb6c1;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .photo-card::before {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 182, 193, 0.1) 0%, transparent 70%);
+            animation: rotate 20s linear infinite;
+            pointer-events: none;
+        }
+
+        @keyframes rotate {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .photo-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 35px rgba(255, 182, 193, 0.5);
+        }
+
+        .photo-card img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            border-radius: 15px;
+            margin-bottom: 15px;
+            border: 2px solid #ffb6c1;
+            position: relative;
+            z-index: 5;
+        }
+
+        .photo-date {
+            color: #e91e63;
+            font-size: 0.9em;
+            font-style: italic;
+            text-align: center;
+            position: relative;
+            z-index: 5;
+        }
+
+        .delete-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(220, 53, 69, 0.8);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+            font-size: 16px;
+            z-index: 10;
+            transition: all 0.3s ease;
+        }
+
+        .delete-btn:hover {
+            background: rgba(220, 53, 69, 1);
+            transform: scale(1.1);
+        }
+
+        .no-photos {
+            text-align: center;
+            color: #e91e63;
+            font-size: 1.2em;
+            font-style: italic;
+            margin-top: 50px;
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 20px;
+            border: 2px dashed #ffb6c1;
+        }
+
+        .success-message {
+            background: linear-gradient(45deg, #28a745, #20c997);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 10px 0;
+            text-align: center;
+            font-weight: bold;
+            opacity: 0;
+            transform: translateY(-20px);
+            transition: all 0.3s ease;
+        }
+
+        .success-message.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .love-decoration {
+            position: fixed;
+            font-size: 2em;
+            color: rgba(255, 182, 193, 0.3);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .love-decoration:nth-child(odd) {
+            animation: sparkle 3s ease-in-out infinite;
+        }
+
+        .love-decoration:nth-child(even) {
+            animation: sparkle 3s ease-in-out infinite reverse;
+        }
+
+        @keyframes sparkle {
+            0%, 100% {
+                transform: scale(1) rotate(0deg);
+                opacity: 0.3;
+            }
+            50% {
+                transform: scale(1.2) rotate(180deg);
+                opacity: 0.8;
+            }
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 50px;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            border: 2px solid #ffb6c1;
+            color: #d63384;
+            font-size: 1.1em;
+        }
+
+        @media (max-width: 768px) {
+            .title {
+                font-size: 2.5em;
+            }
+            
+            .title::before,
+            .title::after {
+                display: none;
+            }
+            
+            .gallery {
+                grid-template-columns: 1fr;
+            }
+            
+            .container {
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Floating Hearts -->
+    <div class="heart">💖</div>
+    <div class="heart">💕</div>
+    <div class="heart">💗</div>
+    <div class="heart">💝</div>
+    <div class="heart">💖</div>
+    <div class="heart">💕</div>
+    <div class="heart">💗</div>
+    <div class="heart">💝</div>
+    <div class="heart">💖</div>
+
+    <!-- Love Decorations -->
+    <div class="love-decoration" style="top: 10%; left: 5%;">💕</div>
+    <div class="love-decoration" style="top: 20%; right: 5%;">💖</div>
+    <div class="love-decoration" style="bottom: 30%; left: 3%;">💗</div>
+    <div class="love-decoration" style="bottom: 15%; right: 8%;">💝</div>
+    <div class="love-decoration" style="top: 60%; left: 2%;">💕</div>
+    <div class="love-decoration" style="top: 80%; right: 3%;">💖</div>
+
+    <div class="container">
+        <div class="header">
+            <h1 class="title">N&D</h1>
+            <p class="subtitle">Our Beautiful Memories Together 💕</p>
+        </div>
+
+        <div class="upload-section">
+            <h2 class="upload-title">
+                💖 Add New Memory 💖
+            </h2>
+            <div class="file-input-wrapper">
+                <input type="file" id="photoInput" class="file-input" accept="image/*" multiple>
+                <label for="photoInput" class="file-input-label">
+                    📸 Choose Photos
+                </label>
+            </div>
+            <button onclick="uploadPhotos()" class="upload-btn" id="uploadBtn" disabled>
+                💕 Upload to Gallery
+            </button>
+            <div id="previewContainer"></div>
+            <div id="successMessage" class="success-message"></div>
+        </div>
+
+        <div id="gallery" class="gallery"></div>
+        <div id="noPhotos" class="no-photos">
+            💕 No memories yet. Upload your first beautiful moment! 💕
+        </div>
+
+        <div class="footer">
+            <p>💖 Made with Love for N&D 💖</p>
+            <p>Every photo tells our beautiful story together 💕</p>
+        </div>
+    </div>
+
+    <script>
+        let selectedFiles = [];
+        let photos = JSON.parse(localStorage.getItem('ndPhotos')) || [];
+
+        // Display existing photos on page load
+        window.addEventListener('load', function() {
+            displayPhotos();
+        });
+
+        // Handle file selection
+        document.getElementById('photoInput').addEventListener('change', function(e) {
+            selectedFiles = Array.from(e.target.files);
+            displayPreviews();
+            
+            const uploadBtn = document.getElementById('uploadBtn');
+            uploadBtn.disabled = selectedFiles.length === 0;
+        });
+
+        function displayPreviews() {
+            const previewContainer = document.getElementById('previewContainer');
+            previewContainer.innerHTML = '';
+
+            selectedFiles.forEach((file, index) => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const previewDiv = document.createElement('div');
+                    previewDiv.style.display = 'inline-block';
+                    previewDiv.style.margin = '10px';
+                    previewDiv.innerHTML = `
+                        <img src="${e.target.result}" class="preview-image" alt="Preview">
+                        <p style="color: #e91e63; text-align: center; margin-top: 5px;">${file.name}</p>
+                    `;
+                    previewContainer.appendChild(previewDiv);
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        function uploadPhotos() {
+            if (selectedFiles.length === 0) return;
+
+            selectedFiles.forEach(file => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const photo = {
+                        id: Date.now() + Math.random(),
+                        data: e.target.result,
+                        name: file.name,
+                        date: new Date().toLocaleDateString('id-ID', {
+                            weekday: 'long',
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit'
+                        })
+                    };
+                    
+                    photos.unshift(photo);
+                    localStorage.setItem('ndPhotos', JSON.stringify(photos));
+                    displayPhotos();
+                };
+                reader.readAsDataURL(file);
+            });
+
+            // Clear selection and previews
+            selectedFiles = [];
+            document.getElementById('photoInput').value = '';
+            document.getElementById('previewContainer').innerHTML = '';
+            document.getElementById('uploadBtn').disabled = true;
+
+            // Show success message
+            showSuccessMessage(`💕 ${selectedFiles.length > 1 ? 'Photos' : 'Photo'} uploaded successfully! 💕`);
+        }
+
+        function displayPhotos() {
+            const gallery = document.getElementById('gallery');
+            const noPhotos = document.getElementById('noPhotos');
+            
+            if (photos.length === 0) {
+                gallery.style.display = 'none';
+                noPhotos.style.display = 'block';
+                return;
+            }
+
+            gallery.style.display = 'grid';
+            noPhotos.style.display = 'none';
+            
+            gallery.innerHTML = photos.map(photo => `
+                <div class="photo-card">
+                    <button class="delete-btn" onclick="deletePhoto('${photo.id}')" title="Delete photo">×</button>
+                    <img src="${photo.data}" alt="${photo.name}" loading="lazy">
+                    <p class="photo-date">💕 ${photo.date} 💕</p>
+                </div>
+            `).join('');
+        }
+
+        function deletePhoto(photoId) {
+            if (confirm('💔 Are you sure you want to delete this beautiful memory?')) {
+                photos = photos.filter(photo => photo.id != photoId);
+                localStorage.setItem('ndPhotos', JSON.stringify(photos));
+                displayPhotos();
+                showSuccessMessage('💔 Photo deleted successfully');
+            }
+        }
+
+        function showSuccessMessage(message) {
+            const successDiv = document.getElementById('successMessage');
+            successDiv.textContent = message;
+            successDiv.classList.add('show');
+            
+            setTimeout(() => {
+                successDiv.classList.remove('show');
+            }, 3000);
+        }
+
+        // Add some interactive heart effects on click
+        document.addEventListener('click', function(e) {
+            createHeartEffect(e.clientX, e.clientY);
+        });
+
+        function createHeartEffect(x, y) {
+            const heart = document.createElement('div');
+            heart.innerHTML = '💕';
+            heart.style.position = 'fixed';
+            heart.style.left = x + 'px';
+            heart.style.top = y + 'px';
+            heart.style.fontSize = '20px';
+            heart.style.color = '#ff69b4';
+            heart.style.pointerEvents = 'none';
+            heart.style.zIndex = '9999';
+            heart.style.animation = 'heartPop 1s ease-out forwards';
+            
+            document.body.appendChild(heart);
+            
+            setTimeout(() => {
+                heart.remove();
+            }, 1000);
+        }
+
+        // Add CSS for heart pop effect
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes heartPop {
+                0% {
+                    transform: scale(0) translateY(0);
+                    opacity: 1;
+                }
+                50% {
+                    transform: scale(1.2) translateY(-20px);
+                    opacity: 0.8;
+                }
+                100% {
+                    transform: scale(0) translateY(-50px);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
